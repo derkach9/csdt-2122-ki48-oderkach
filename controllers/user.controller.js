@@ -1,7 +1,7 @@
-const {User, O_Auth} = require('../dataBase');
-const {passwordService,emailService} = require('../service');
+const {User, O_Auth, ActionToken} = require('../dataBase');
+const {emailService, jwtService} = require('../service');
 const userUtil = require('../util/user.util');
-const {emailActionsEnum} = require('../configs');
+const {emailActionsEnum, actionTokenTypeEnum, config, constants} = require('../configs');
 
 module.exports = {
     getUsers: async (req, res, next) => {
@@ -31,17 +31,26 @@ module.exports = {
 
     createUser: async (req, res, next) => {
         try {
-            const {password, name} = req.body;
+            const {name} = req.body;
 
-            const hashedPassword = await passwordService.hash(password);
+            const newUser = await User.createUserWithHashPassword(req.body);
 
-            await emailService.sendMail(req.body.email, emailActionsEnum.WELCOME, {userName: name});
+            const token = jwtService.generateActionToken(actionTokenTypeEnum.ACTIVATE);
 
-            const newUser = await User.create({...req.body, password: hashedPassword});
+            await ActionToken.create({token, token_type: actionTokenTypeEnum.ACTIVATE, user_id: newUser._id});
+
+            await emailService.sendMail(
+                req.body.email,
+                emailActionsEnum.WELCOME,
+                {
+                    userName: name,
+                    activateUrl: `${config.LOCALHOST_5000}auth/activate/${token}`
+                });
 
             const normalizedUser = userUtil.userNormalizator(newUser.toObject());
 
-            res.json(normalizedUser);
+            res.json(normalizedUser)
+                .status(constants.CREATED);
         } catch (err) {
             next(err);
         }
@@ -57,7 +66,7 @@ module.exports = {
 
             await emailService.sendMail(req.body.email, emailActionsEnum.DELETE);
 
-            res.json(`User with id: ${user_id} deleted`);
+            res.sendStatus(constants.NO_CONTENT);
         } catch (err) {
             next(err);
         }
@@ -70,11 +79,12 @@ module.exports = {
             const newUser = await User.findByIdAndUpdate(user_id, req.body, {new: true})
                 .lean();
 
-            await emailService.sendMail(newUser.email, emailActionsEnum.UPDATE,{userName:newUser.name});
+            await emailService.sendMail(newUser.email, emailActionsEnum.UPDATE, {userName: newUser.name});
 
             const normalizedUser = userUtil.userNormalizator(newUser);
 
-            res.json(normalizedUser);
+            res.json(normalizedUser)
+                .status(constants.CREATED);
         } catch (err) {
             next(err);
         }

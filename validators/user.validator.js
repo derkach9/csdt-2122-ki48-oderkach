@@ -45,8 +45,16 @@ const authUserValidator = Joi.object({
         .required()
 });
 
+const passwordUserValidator = Joi.object({
+    password: Joi
+        .string()
+        .regex(constants.PASSWORD_REGEXP)
+        .required()
+});
+
 module.exports = {
     createUserValidator,
     authUserValidator,
-    updateUserValidator
+    updateUserValidator,
+    passwordUserValidator
 };

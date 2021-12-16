@@ -30,4 +30,19 @@ router.post(
     authController.refresh
 );
 
+router.post(
+    '/password/forgot',
+    authController.sendMailForgotPassword);
+
+router.put(
+    '/password/forgot',
+    authMiddleware.isUserForgotPassValid,
+    authMiddleware.checkActionToken,
+    authController.setNewPasswordAfterForgot);
+
+router.get(
+    '/activate/:token',
+    authMiddleware.checkActivateToken,
+    authController.activate);
+
 module.exports = router;
