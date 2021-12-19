@@ -1,6 +1,6 @@
 const {Schema, model} = require('mongoose');
 
-const {userRoles,modelNamesEnum} = require('../configs');
+const {userRoles} = require('../configs');
 const {passwordService} = require('../service');
 
 const userSchema = new Schema({
@@ -47,4 +47,4 @@ userSchema.statics = {
     }
 };
 
-module.exports = model(modelNamesEnum.USER, userSchema);
+module.exports = model('user', userSchema);

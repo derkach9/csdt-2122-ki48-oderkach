@@ -24,8 +24,7 @@ const createCarValidator = Joi.object({
 
     price: Joi
         .number()
-        .required(),
-
+        .required()
 });
 const updateCarValidator = Joi.object({
     brand: Joi

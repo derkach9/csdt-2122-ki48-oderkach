@@ -4,6 +4,5 @@ module.exports = {
     ORDER_CONFIRMED: 'orderConfirmed',
     DELETE: 'delete',
     UPDATE: 'update',
-    FORGOT_PASSWORD: 'forgotPassword',
-    CHANGE_PASSWORD: 'changePassword'
+    FORGOT_PASSWORD: 'forgotPassword'
 };

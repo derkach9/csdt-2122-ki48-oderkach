@@ -3,7 +3,6 @@ const router = require('express')
 
 const {authController} = require('../controllers');
 const {userMiddleware, authMiddleware} = require('../middlewares');
-const {actionTokenTypeEnum, emailActionsEnum} = require('../configs');
 
 router.post(
     '/',
@@ -33,25 +32,13 @@ router.post(
 
 router.post(
     '/password/forgot',
-    authMiddleware.isEmailValid,
-    authController.sendMailForgotPassword(actionTokenTypeEnum.FORGOT_PASSWORD, emailActionsEnum.FORGOT_PASSWORD));
+    authController.sendMailForgotPassword);
 
 router.put(
     '/password/forgot',
-    authMiddleware.isUserPassValid,
-    authMiddleware.checkActionToken(actionTokenTypeEnum.FORGOT_PASSWORD),
-    authController.setNewPasswordForgot);
-
-router.post(
-    '/password/change',
-    authMiddleware.isEmailValid,
-    authController.sendMailForgotPassword(actionTokenTypeEnum.CHANGE_PASSWORD, emailActionsEnum.CHANGE_PASSWORD));
-
-router.put(
-    '/password/change',
-    authMiddleware.isUserPassValid,
-    authMiddleware.checkActionToken(actionTokenTypeEnum.CHANGE_PASSWORD),
-    authController.setNewPasswordForgot);
+    authMiddleware.isUserForgotPassValid,
+    authMiddleware.checkActionToken,
+    authController.setNewPasswordAfterForgot);
 
 router.get(
     '/activate/:token',
