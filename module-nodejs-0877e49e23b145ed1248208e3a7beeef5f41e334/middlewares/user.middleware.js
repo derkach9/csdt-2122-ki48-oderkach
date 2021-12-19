@@ -11,7 +11,7 @@ module.exports = {
             const userByEmail = await User.findOne({email});
 
             if (userByEmail) {
-                throw new ErrorHandler(constants.EMAIL_ALREADY_EXISTS, constants.NOT_FOUND);
+                throw new ErrorHandler(constants.EMAIL_ALREADY_EXISTS, constants.BAD_REQUEST);
             }
 
             next();

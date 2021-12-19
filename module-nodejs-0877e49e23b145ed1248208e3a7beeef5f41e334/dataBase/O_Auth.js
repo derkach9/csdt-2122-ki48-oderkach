@@ -1,5 +1,7 @@
 const {Schema, model} = require('mongoose');
 
+const {modelNamesEnum} = require('../configs');
+
 const oAuthSchema = new Schema({
     access_token: {
         type: String,
@@ -23,4 +25,4 @@ oAuthSchema.pre('findOne', function() {
     this.populate('user_id');
 });
 
-module.exports = model('o_auth', oAuthSchema);
+module.exports = model(modelNamesEnum.O_AUTH, oAuthSchema);

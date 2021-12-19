@@ -4,5 +4,6 @@ module.exports = {
     userRoles: require('./user-roles.enum'),
     tokenTypeEnum: require('./token-type.enum'),
     emailActionsEnum: require('./email-action.enum'),
-    actionTokenTypeEnum: require('./action-token-type.enum')
+    actionTokenTypeEnum: require('./action-token-type.enum'),
+    modelNamesEnum: require('./model-names.enum')
 };

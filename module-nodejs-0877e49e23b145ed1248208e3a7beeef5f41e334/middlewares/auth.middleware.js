@@ -10,6 +10,7 @@ module.exports = {
             const {error, value} = userValidator.authUserValidator.validate(req.body);
 
             if (error) {
+
                 throw new ErrorHandler(error.details[0].message, constants.BAD_REQUEST);
             }
 
@@ -21,9 +22,25 @@ module.exports = {
         }
     },
 
-    isUserForgotPassValid: (req, res, next) => {
+    isUserPassValid: (req, res, next) => {
         try {
             const {error, value} = userValidator.passwordUserValidator.validate(req.body);
+
+            if (error) {
+                throw new ErrorHandler(error.details[0].message, constants.BAD_REQUEST);
+            }
+
+            req.body = value;
+
+            next();
+        } catch (err) {
+            next(err);
+        }
+    },
+
+    isEmailValid: (req, res, next) => {
+        try {
+            const {error, value} = userValidator.emailUserValidator.validate(req.body);
 
             if (error) {
                 throw new ErrorHandler(error.details[0].message, constants.BAD_REQUEST);
@@ -102,7 +119,7 @@ module.exports = {
         }
     },
 
-    checkActionToken: async (req, res, next) => {
+    checkActionToken: (actionTokenTypeEnum) => async (req, res, next) => {
         try {
             const token = req.get(constants.AUTHORIZATION);
 
@@ -110,7 +127,7 @@ module.exports = {
                 throw new ErrorHandler(constants.INVALID_TOKEN, constants.UNAUTHORIZED);
             }
 
-            await jwtService.verifyToken(token, actionTokenTypeEnum.FORGOT_PASSWORD);
+            await jwtService.verifyToken(token, actionTokenTypeEnum);
 
             const tokenResponse = await ActionToken
                 .findOne({token});

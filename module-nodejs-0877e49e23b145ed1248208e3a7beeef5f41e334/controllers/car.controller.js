@@ -3,7 +3,9 @@ const {Car} = require('../dataBase');
 module.exports = {
     createCar: async (req, res, next) => {
         try {
-            const newCar = await Car.create(req.body);
+            const {user_id} = req.params;
+
+            const newCar = await Car.create({...req.body,user_id});
 
             res.json(newCar);
         } catch (err) {
@@ -21,7 +23,9 @@ module.exports = {
 
     getCars: async (req, res, next) => {
         try {
-            const users = await Car.find();
+            const {user_id} = req.params;
+
+            const users = await Car.find({user_id});
 
             res.json(users);
         } catch (err) {
